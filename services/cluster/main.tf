@@ -33,7 +33,7 @@ resource "aws_iam_policy_attachment" "secrets_policy_attachment" {
 
 resource "aws_cloudwatch_log_group" "aws_ecs_task_definition_container_definitions_var_cloudwatch_log_group_name" {
   for_each = var.aws_ecs_task_definition_container_definitions_var_container_image
-  name     = "${var.aws_ecs_task_definition_container_definitions_var_container_image[each.key].name}-logs"
+  name     = "${var.aws_ecs_cluster_name}-${var.aws_ecs_task_definition_container_definitions_var_container_image[each.key].name}-logs"
 
   tags = var.aws_ecs_task_definition_container_definitions_var_container_image[each.key].tags
 }
