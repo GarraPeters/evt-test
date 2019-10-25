@@ -9,7 +9,7 @@ resource "aws_ecr_repository" "repo" {
 resource "aws_ecr_repository_policy" "main" {
   for_each   = var.aws_ecs_task_definition_container_definitions_var_container_image
   repository = aws_ecr_repository.repo[each.key].name
-  policy     = file("ecr_policy.tpl")
+  policy     = file("${path.module}/ecr_policy.tpl")
 
 }
 
