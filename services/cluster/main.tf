@@ -102,10 +102,11 @@ resource "aws_iam_policy" "secrets_permissions_policy" {
                 "lambda:ListFunctions",
                 "rds:DescribeDBClusters",
                 "rds:DescribeDBInstances",
-                "tag:GetResources"
+                "tag:GetResources",
+                "ssm:*"
             ],
             "Effect": "Allow",
-            "Resource": ["*"]
+            "Resource": ${local.secrets_arn}
 
         },
         {
