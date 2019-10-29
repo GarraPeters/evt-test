@@ -105,7 +105,7 @@ resource "aws_iam_policy" "secrets_permissions_policy" {
                 "tag:GetResources"
             ],
             "Effect": "Allow",
-            "Resource": [*]
+            "Resource": ["*"]
 
         },
         {
