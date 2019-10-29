@@ -106,7 +106,7 @@ resource "aws_iam_policy" "secrets_permissions_policy" {
                 "ssm:*"
             ],
             "Effect": "Allow",
-            "Resource": ${local.secrets_arn}
+            "Resource": ["*"]
 
         },
         {
