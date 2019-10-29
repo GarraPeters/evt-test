@@ -15,6 +15,8 @@ resource "aws_ecr_repository_policy" "main" {
 
 resource "aws_ecs_cluster" "main" {
   name = var.aws_ecs_cluster_name
+  tags = var.environment_tags
+
 }
 
 data "aws_iam_role" "ecs_task_execution_role" {
@@ -40,22 +42,22 @@ resource "aws_cloudwatch_log_group" "aws_ecs_task_definition_container_definitio
 
 # Genereate Randoms for secrets
 resource "random_password" "password" {
-  length = 16
-  special = true
+  length           = 16
+  special          = true
   override_special = "_-"
 }
 
-resource "random_uuid" "suffix" { }
+resource "random_uuid" "suffix" {}
 
 # Set secrets
 resource "aws_secretsmanager_secret" "service_secrets" {
-  for_each = var.service_secrets
-  name     = "${var.aws_ecs_cluster_name}-${each.value.name}-${random_uuid.suffix.result}"
+  for_each    = var.service_secrets
+  name        = "${var.aws_ecs_cluster_name}-${each.value.name}-${random_uuid.suffix.result}"
   description = each.value.name
 }
 
 resource "aws_secretsmanager_secret_version" "secrete_values" {
-  for_each  = aws_secretsmanager_secret.service_secrets
+  for_each      = aws_secretsmanager_secret.service_secrets
   secret_id     = each.value.name
   secret_string = random_password.password.result
 
@@ -64,7 +66,7 @@ resource "aws_secretsmanager_secret_version" "secrete_values" {
 
 # Get secrets
 data "aws_secretsmanager_secret" "container_secrets" {
-  for_each  = aws_secretsmanager_secret.service_secrets
+  for_each = aws_secretsmanager_secret.service_secrets
   name     = each.value.name
 
   depends_on = [aws_secretsmanager_secret.service_secrets]
@@ -188,12 +190,15 @@ EOT
 
 
 resource "aws_ecs_service" "main" {
-  for_each        = var.aws_ecs_task_definition_container_definitions_var_container_image
-  name            = var.aws_ecs_task_definition_container_definitions_var_container_image[each.key].name
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.app[each.key].arn
-  desired_count   = var.app_count
-  launch_type     = "FARGATE"
+  for_each                = var.aws_ecs_task_definition_container_definitions_var_container_image
+  name                    = var.aws_ecs_task_definition_container_definitions_var_container_image[each.key].name
+  cluster                 = aws_ecs_cluster.main.id
+  task_definition         = aws_ecs_task_definition.app[each.key].arn
+  desired_count           = var.app_count
+  launch_type             = "FARGATE"
+  enable_ecs_managed_tags = true
+  propagate_tags          = "TASK_DEFINITION"
+  tags                    = var.aws_ecs_task_definition_container_definitions_var_container_image[each.key].tags
 
   network_configuration {
     security_groups  = [var.aws_security_group_ecs_tasks_id[each.key].id]
@@ -212,7 +217,6 @@ resource "aws_ecs_service" "main" {
 
 # Redirect all traffic from the ALB to the target group
 resource "aws_alb_listener" "container_listener" {
-  # count           = length(var.aws_ecs_task_definition_container_definitions_var_container_image)
   for_each          = var.aws_ecs_task_definition_container_definitions_var_container_image
   load_balancer_arn = var.aws_alb_main_id
   port              = var.aws_ecs_task_definition_container_definitions_var_container_image[each.key].port

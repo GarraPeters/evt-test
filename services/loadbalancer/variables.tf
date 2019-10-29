@@ -16,7 +16,7 @@ variable "aws_vpc_main_id" {
 
 
 variable "aws_subnets" {
-  type        = list
+  type = list
 }
 
 variable "aws_acm_certificate_validation_default_certificate_arn" {
@@ -24,5 +24,9 @@ variable "aws_acm_certificate_validation_default_certificate_arn" {
 }
 
 variable "service_config" {
+}
+
+variable "environment_tags" {
+  type = map
 }
 

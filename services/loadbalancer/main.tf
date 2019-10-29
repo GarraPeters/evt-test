@@ -5,6 +5,7 @@ resource "aws_alb" "main" {
   internal        = false
   subnets         = var.aws_subnets.*.id
   security_groups = [var.aws_security_group_lb_id]
+  tags            = var.environment_tags
 }
 
 resource "aws_alb_target_group" "app" {

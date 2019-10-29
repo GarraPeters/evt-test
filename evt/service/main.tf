@@ -1,5 +1,5 @@
 module "security" {
-  source = "./services/security"
+  source = "../../services/security"
 
   aws_security_group_name = "${var.service_name}-alb-security-group"
   container_config        = var.container_config
@@ -8,14 +8,14 @@ module "security" {
 }
 
 module "cert_manager" {
-  source = "./services/cert_manager"
+  source = "../../services/cert_manager"
 
   network_route53_zone_name = module.dns.zone_name
   network_route53_zone_id   = module.dns.zone_id
 }
 
 module "dns" {
-  source = "./services/dns"
+  source = "../../services/dns"
 
   aws_route53_zone_name        = "${var.service_name}.${var.aws_route53_root_zone_name}"
   aws_route53_record_zone_name = "${var.service_name}.${var.aws_route53_root_zone_name}"
@@ -28,7 +28,7 @@ module "dns" {
 }
 
 module "loadbalancer" {
-  source = "./services/loadbalancer"
+  source = "../../services/loadbalancer"
 
   aws_alb_name                                           = "${var.service_name}-alb"
   aws_alb_target_group_name                              = "${var.service_name}-alb"
@@ -42,7 +42,7 @@ module "loadbalancer" {
 }
 
 module "cluster" {
-  source = "./services/cluster"
+  source = "../../services/cluster"
 
   service_secrets                                                   = var.service_secrets
   app_count                                                         = var.app_count
