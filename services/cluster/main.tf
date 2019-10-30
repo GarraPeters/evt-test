@@ -139,23 +139,13 @@ EOF
 }
 
 
-# resource "null_resource" "json_secrets" {
-#   for_each = data.aws_secretsmanager_secret.container_secrets
-#   value = {
-#     {
-#       "valueFrom": "${each.arn}",
-#       "name": "${eqach.description}"
-#     }
-#   }
-# }
-
 locals {
-  secrets_json = flatten([
-    for secret in data.aws_secretsmanager_secret.container_secrets : [
-      valueFrom: secret.arn
-      name: secret.description
-    ]
-  ])
+  secrets_json = [
+    for secret in data.aws_secretsmanager_secret.container_secrets : {
+      valueFrom = secret.arn
+      name      = secret.description
+    }
+  ]
 }
 
 resource "aws_ecs_task_definition" "app" {
@@ -186,7 +176,7 @@ resource "aws_ecs_task_definition" "app" {
       "logDriver": "awslogs",
       "options": {
         "awslogs-region": "${var.aws_region}",
-        "awslogs-group": "${var.aws_ecs_task_definition_container_definitions_var_container_image[each.key].name}",
+        "awslogs-group": "${aws_cloudwatch_log_group.aws_ecs_task_definition_container_definitions_var_cloudwatch_log_group_name[each.key].name}",
         "awslogs-stream-prefix": "ecs"
       }
     }
