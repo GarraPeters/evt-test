@@ -1,7 +1,7 @@
 module "evt-service" {
   source = "./evt/service"
 
-  service_name               = "service1"
+  service_name               = "service-2nd"
   aws_region                 = var.aws_region
   public_subnet              = true
   aws_route53_root_zone_name = "evt.zone"
@@ -17,16 +17,6 @@ module "evt-service" {
       name             = "image111",
       image            = "nginx:latest",
       port             = "80",
-      assign_public_ip = true,
-      tags = merge({
-        "tag1" = "value1",
-        "tag2" = "value2"
-      }, var.environment_tags)
-    }
-    container2 = {
-      name             = "image2222",
-      image            = "nginx:latest",
-      port             = "443",
       assign_public_ip = true,
       tags = merge({
         "tag1" = "value1",
