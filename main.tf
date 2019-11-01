@@ -4,7 +4,7 @@ module "evt-service" {
   service_name               = "service-2nd"
   aws_region                 = var.aws_region
   public_subnet              = true
-  aws_route53_root_zone_name = "evt.zone"
+  aws_route53_root_zone_name = var.aws_root_zone
 
   service_secrets = {
     secret1 = {

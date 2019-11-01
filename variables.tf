@@ -14,7 +14,9 @@ variable "aws_subnet_private" {
   type = list
 }
 
-
+variable "aws_root_zone" {
+  type = string
+}
 
 variable "environment_tags" {
   type = map
